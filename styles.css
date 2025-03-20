@@ -121,9 +121,3 @@ input[type="checkbox"] {
 .copy-feedback.visible {
     opacity: 1;
 }
-
-.token-login {
-    color: #8a63d2;
-    font-weight: bold;
-    margin-right: 15px;
-}
