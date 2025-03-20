@@ -71,6 +71,9 @@
             
             const activationBox = document.getElementById('activationBox');
             activationBox.classList.remove('hidden');
+
+            const existingBtn = document.getElementById('activationConfirmBtn');
+            if (existingBtn) existingBtn.remove();
             
             activationBox.scrollIntoView({ 
                 behavior: 'smooth',
@@ -79,7 +82,7 @@
             
             document.getElementById('userCode').textContent = data.user_code;
             document.getElementById('activateButton').onclick = () => window.open(data.verification_uri);
-            document.getElementById('activateButton').insertAdjacentHTML('afterend', '<button onclick="pollForToken()">I have activated the code</button>');
+            document.getElementById('activateButton').insertAdjacentHTML('afterend', '<button id="activationConfirmBtn" onclick="pollForToken()">I have activated the code</button>');
         } catch (error) {
             alert('Error generating device code: ' + error.message);
         }
