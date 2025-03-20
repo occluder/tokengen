@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch Token Generator</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="disclaimer-box">
+      <p>❕ Note: All operations including token generation, storage, and revocation 
+        happen entirely in your browser. No data is sent to or stored on any external server.
+        Tokens are saved in your browser's local storage and can be revoked at any time.</p>
+      <br>
+      <p>Source code for this page is available
+        <a href="https://example.com">here</a>.</p>
+    </div>
+    <div class="token-list" id="tokenList"></div>
+    <div>
+      <button onclick="toggleAll(true)">Select All</button>
+      <button onclick="toggleAll(false)">Deselect All</button>
+    </div>
+    <div class="checkboxes" id="checkboxContainer"></div>
+    <button onclick="generateDeviceCode()">Generate Token</button>
+    <div class="status-box hidden" id="activationBox">
+      <p>User Code:
+        <span id="userCode"></span></p>
+      <button id="activateButton">Open Activation Page</button>
+    </div>
+    <script>
+      let currentDeviceCode = '';
+        const clientId = 'ue6666qo983tsx6so1t0vnawi233wa';
+        const scopes = "analytics:read:extensions user:edit user:read:email clips:edit bits:read analytics:read:games user:edit:broadcast user:read:broadcast chat:read chat:edit channel:moderate channel:read:subscriptions whispers:read whispers:edit moderation:read channel:read:redemptions channel:edit:commercial channel:read:hype_train channel:read:stream_key channel:manage:extensions channel:manage:broadcast user:edit:follows channel:manage:redemptions channel:read:editors channel:manage:videos user:read:blocked_users user:manage:blocked_users user:read:subscriptions user:read:follows channel:manage:polls channel:manage:predictions channel:read:polls channel:read:predictions moderator:manage:automod channel:manage:schedule channel:read:goals moderator:read:automod_settings moderator:manage:automod_settings moderator:manage:banned_users moderator:read:blocked_terms moderator:manage:blocked_terms moderator:read:chat_settings moderator:manage:chat_settings channel:manage:raids moderator:manage:announcements moderator:manage:chat_messages user:manage:chat_color channel:manage:moderators channel:read:vips channel:manage:vips user:manage:whispers channel:read:charity moderator:read:chatters moderator:read:shield_mode moderator:manage:shield_mode moderator:read:shoutouts moderator:manage:shoutouts moderator:read:followers channel:read:guest_star channel:manage:guest_star moderator:read:guest_star moderator:manage:guest_star channel:bot user:bot user:read:chat channel:manage:ads channel:read:ads user:read:moderated_channels user:write:chat user:read:emotes moderator:read:unban_requests moderator:manage:unban_requests moderator:read:suspicious_users moderator:manage:warnings moderator:read:moderators moderator:read:vips channel_read user_blocks_edit user_blocks_read user_follows_edit user_read channel:read:moderators moderator:read:banned_users moderator:read:chat_messages moderator:read:warnings user:read:whispers user_presence_friends_read user_subscriptions chat_login";
+
+
+        function initializeCheckboxes() {
+            const container = document.getElementById('checkboxContainer');
+            scopes.split(' ').sort().forEach(scope => {
+                const category = scope.split(':')[0];
+                const div = document.createElement('div');
+                div.className = `checkbox-item category-${category}`;
+                div.innerHTML = `
+                    <label>
+                        <input type="checkbox" value="${scope}">
+                        ${scope}
+                    </label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleAll(checked) {
+            document.querySelectorAll('#checkboxContainer input[type="checkbox"]')
+                .forEach(checkbox => checkbox.checked = checked);
+        }
+
+        async function generateDeviceCode() {
+        const selectedScopes = Array.from(
+            document.querySelectorAll('#checkboxContainer input[type="checkbox"]:checked')
+        ).map(c => c.value).join(' ');
+
+        try {
+            const response = await fetch(`https://id.twitch.tv/oauth2/device?client_id=${clientId}&scopes=${encodeURIComponent(selectedScopes)}`, {
+                method: 'POST'
+            });
+            
+            const data = await response.json();
+            currentDeviceCode = data.device_code;
+            
+            const activationBox = document.getElementById('activationBox');
+            activationBox.classList.remove('hidden');
+            
+            activationBox.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+            
+            document.getElementById('userCode').textContent = data.user_code;
+            document.getElementById('activateButton').onclick = () => window.open(data.verification_uri);
+            document.getElementById('activateButton').insertAdjacentHTML('afterend', '<button onclick="pollForToken()">I have activated the code</button>');
+        } catch (error) {
+            alert('Error generating device code: ' + error.message);
+        }
+    }
+
+        async function pollForToken() {
+            try {
+                const response = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${clientId}&device_code=${currentDeviceCode}&grant_type=urn:ietf:params:oauth:grant-type:device_code`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                if (data.access_token) {
+                    saveToken(data);
+                    location.reload();
+                } else {
+                    alert('Activation pending... Please try again in a few seconds.');
+                }
+            } catch (error) {
+                alert('Error generating token: ' + error.message);
+            }
+        }
+
+        function saveToken(tokenData) {
+            const tokens = JSON.parse(localStorage.getItem('tokens') || '[]');
+            tokens.push({
+                access_token: tokenData.access_token,
+                client_id: clientId,
+                scopes: tokenData.scope,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('tokens', JSON.stringify(tokens));
+        }
+
+        function loadTokens() {
+            const tokens = JSON.parse(localStorage.getItem('tokens') || '[]');
+            const container = document.getElementById('tokenList');
+            container.innerHTML = tokens.map((token, index) => {
+                const date = new Date(token.date).toLocaleString();
+                return `
+                    <div class="token-item">
+                        <button onclick="copyToClipboard('${token.access_token}')">Copy Token</button>
+                        <button onclick="copyToClipboard('${token.client_id}')">Copy Client ID</button>
+                        <button onclick="showScopes(${index})">View Scopes</button>
+                        <button onclick="revokeToken(${index})">Revoke</button>
+                        <span class="token-date">Generated at: ${date}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            alert('Copied to clipboard!');
+        }
+
+        function showScopes(index) {
+            const tokens = JSON.parse(localStorage.getItem('tokens'));
+            alert(tokens[index].scopes.join('\n'));
+        }
+
+        async function revokeToken(index) {
+            const tokens = JSON.parse(localStorage.getItem('tokens'));
+            const token = tokens[index];
+            
+            try {
+                await fetch(`https://id.twitch.tv/oauth2/revoke?client_id=${token.client_id}&token=${token.access_token}`, {
+                    method: 'POST'
+                });
+                
+                tokens.splice(index, 1);
+                localStorage.setItem('tokens', JSON.stringify(tokens));
+                loadTokens();
+            } catch (error) {
+                alert('Error revoking token: ' + error.message);
+            }
+        }
+
+
+        initializeCheckboxes();
+        loadTokens();
+    </script>
+  </body>
+</html>
