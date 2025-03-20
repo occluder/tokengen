@@ -25,7 +25,8 @@
     <button onclick="generateDeviceCode()">Generate Token</button>
     <div class="status-box hidden" id="activationBox">
       <p>User Code:
-        <span id="userCode"></span></p>
+        <span id="userCode" class="copyable" onclick="copyUserCode()"></span>
+        <span id="copyFeedback" class="copy-feedback"></span></p>
       <button id="activateButton">Open Activation Page</button>
     </div>
     <script>
@@ -134,6 +135,25 @@
             navigator.clipboard.writeText(text);
             alert('Copied to clipboard!');
         }
+
+        function copyUserCode() {
+        const userCode = document.getElementById('userCode').textContent;
+        const feedback = document.getElementById('copyFeedback');
+        
+        navigator.clipboard.writeText(userCode).then(() => {
+            feedback.textContent = 'Copied!';
+            feedback.classList.add('visible');
+            setTimeout(() => {
+                feedback.classList.remove('visible');
+            }, 2000);
+        }).catch(err => {
+            feedback.textContent = 'Failed to copy!';
+            feedback.classList.add('visible');
+            setTimeout(() => {
+                feedback.classList.remove('visible');
+            }, 2000);
+        });
+    }
 
         function showScopes(index) {
             const tokens = JSON.parse(localStorage.getItem('tokens'));

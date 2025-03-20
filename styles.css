@@ -1,99 +1,123 @@
 body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #ffffff;
-            margin: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    margin: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-        .token-list {
-            margin-bottom: 30px;
-            background: #2a2a2a;
-            padding: 15px;
-            border-radius: 8px;
-        }
+.token-list {
+    margin-bottom: 30px;
+    background: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+}
 
-        .token-item {
-            margin: 10px 0;
-            padding: 10px;
-            background: #333;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.token-item {
+    margin: 10px 0;
+    padding: 10px;
+    background: #333;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-        button {
-            background-color: #6441a5;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+button {
+    background-color: #6441a5;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
-        button:hover {
-            background-color: #7d5bbe;
-        }
+button:hover {
+    background-color: #7d5bbe;
+}
 
-        .checkboxes {
-            column-count: 3;
-            margin: 20px 0;
-        }
+.checkboxes {
+    column-count: 3;
+    margin: 20px 0;
+}
 
-        .checkbox-item {
-            margin: 5px 0;
-            display: block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            break-inside: avoid-column;
-        }
+.checkbox-item {
+    margin: 5px 0;
+    display: block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    break-inside: avoid-column;
+}
 
-        .status-box {
-            margin: 20px 0;
-            padding: 15px;
-            background: #2a2a2a;
-            border-radius: 8px;
-        }
+.status-box {
+    margin: 20px 0;
+    padding: 15px;
+    background: #2a2a2a;
+    border-radius: 8px;
+}
 
-        input[type="checkbox"] {
-            margin-right: 8px;
-        }
+input[type="checkbox"] {
+    margin-right: 8px;
+}
 
-        .hidden {
-            display: none;
-        }
+.hidden {
+    display: none;
+}
 
-        .token-date {
-            color: #999;
-            font-size: 0.9em;
-            margin-left: auto;
-            padding-right: 10px;
-        }
+.token-date {
+    color: #999;
+    font-size: 0.9em;
+    margin-left: auto;
+    padding-right: 10px;
+}
 
-        .disclaimer-box {
-            background-color: #2b2b2b;
-            border-left: 4px solid #6441a5;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
+.disclaimer-box {
+    background-color: #2b2b2b;
+    border-left: 4px solid #6441a5;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
 
-        .disclaimer-box p {
-            margin: 0;
-            font-size: 0.9em;
-            color: #cccccc;
-        }
+.disclaimer-box p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #cccccc;
+}
 
-        .category-analytics { background: rgba(101, 72, 144, 0.15); }
-        .category-user { background: rgba(144, 101, 72, 0.15); }
-        .category-channel { background: rgba(72, 144, 101, 0.15); }
-        .category-chat { background: rgba(72, 101, 144, 0.15); }
-        .category-moderator { background: rgba(144, 72, 144, 0.15); }
-        .category-whispers { background: rgba(144, 144, 72, 0.15); }
-        .category-bits { background: rgba(144, 72, 101, 0.15); }
-        .category-clips { background: rgba(72, 144, 144, 0.15); }
-        .category-moderation { background: rgba(90, 90, 90, 0.15); }
+.category-analytics { background: rgba(101, 72, 144, 0.15); }
+.category-user { background: rgba(144, 101, 72, 0.15); }
+.category-channel { background: rgba(72, 144, 101, 0.15); }
+.category-chat { background: rgba(72, 101, 144, 0.15); }
+.category-moderator { background: rgba(144, 72, 144, 0.15); }
+.category-whispers { background: rgba(144, 144, 72, 0.15); }
+.category-bits { background: rgba(144, 72, 101, 0.15); }
+.category-clips { background: rgba(72, 144, 144, 0.15); }
+.category-moderation { background: rgba(90, 90, 90, 0.15); }
+
+.copyable {
+    cursor: pointer;
+    color: #6441a5;
+    text-decoration: underline dotted;
+    transition: all 0.2s;
+}
+
+.copyable:hover {
+    color: #7d5bbe;
+    text-decoration: underline solid;
+}
+
+.copy-feedback {
+    margin-left: 8px;
+    color: #4CAF50;
+    font-size: 0.9em;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.copy-feedback.visible {
+    opacity: 1;
+}
